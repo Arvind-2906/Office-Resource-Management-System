@@ -1,0 +1,61 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: office_resource_backend
+    restart: unless-stopped
+    ports:
+      - "${PORT:-5000}:5000"
+    environment:
+      - PORT=5000
+      - NODE_ENV=production
+      - MONGO_URI=${MONGO_URI:-mongodb+srv://arvindpatil9206_db_user:UyN82HakA8VMbHs2@cluster0.6r4lbcg.mongodb.net/office_resource_db?retryWrites=true&w=majority}
+      - JWT_SECRET=${JWT_SECRET:-Rq^Qo84(^h6b1i>D|2jD,5Rvbt.{?he]mdyeyc9z-H=}
+      - JWT_EXPIRES_IN=7d
+      - CLIENT_URL=${CLIENT_URL:-http://localhost}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    networks:
+      - office-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: office_resource_frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "5173:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - office-network
+
+  # Optional local MongoDB container for offline development
+  mongodb:
+    image: mongo:6.0
+    container_name: office_resource_mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - office-network
+    profiles:
+      - local-mongo
+
+networks:
+  office-network:
+    driver: bridge
+
+volumes:
+  mongo-data:
+    driver: local

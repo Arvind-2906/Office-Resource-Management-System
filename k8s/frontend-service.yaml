@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-service
+  namespace: office-management
+  labels:
+    app: office-frontend
+spec:
+  type: ClusterIP
+  selector:
+    app: office-frontend
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
