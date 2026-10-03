@@ -10,12 +10,13 @@ coverage/
 dist/
 build/
 
-# Environment Variables
+# Environment Variables & Secrets
 .env
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
+k8s/secrets.yaml
 
 # Logs
 npm-debug.log*
