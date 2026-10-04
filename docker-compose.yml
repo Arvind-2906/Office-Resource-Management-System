@@ -13,13 +13,13 @@ services:
       - MONGO_URI=${MONGO_URI:-mongodb+srv://arvindpatil9206_db_user:UyN82HakA8VMbHs2@cluster0.6r4lbcg.mongodb.net/office_resource_db?retryWrites=true&w=majority}
       - JWT_SECRET=${JWT_SECRET:-Rq^Qo84(^h6b1i>D|2jD,5Rvbt.{?he]mdyeyc9z-H=}
       - JWT_EXPIRES_IN=7d
-      - CLIENT_URL=${CLIENT_URL:-http://localhost}
+      - CLIENT_URL=${CLIENT_URL:-http://localhost:5173}
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:5000/api/health"]
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 10s
+      start_period: 15s
     networks:
       - office-network
 
@@ -27,10 +27,12 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      args:
+        - VITE_API_URL=${VITE_API_URL:-http://localhost:5000/api}
     container_name: office_resource_frontend
     restart: unless-stopped
     ports:
-      - "80:80"
+      - "${FRONTEND_PORT:-80}:80"
       - "5173:80"
     depends_on:
       backend:
@@ -38,24 +40,6 @@ services:
     networks:
       - office-network
 
-  # Optional local MongoDB container for offline development
-  mongodb:
-    image: mongo:6.0
-    container_name: office_resource_mongodb
-    restart: unless-stopped
-    ports:
-      - "27017:27017"
-    volumes:
-      - mongo-data:/data/db
-    networks:
-      - office-network
-    profiles:
-      - local-mongo
-
 networks:
   office-network:
     driver: bridge
-
-volumes:
-  mongo-data:
-    driver: local

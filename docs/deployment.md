@@ -82,7 +82,8 @@ For an academic mini-project, the most cost-effective and practical architecture
    ```bash
    git clone https://github.com/Arvind-2906/Office-Resource-Management-System.git
    cd Office-Resource-Management-System
-   bash scripts/deploy.sh
+   kubectl apply -f k8s/namespace.yaml
+   kubectl apply -f k8s/
    ```
 4. **MongoDB Atlas Whitelisting**:
    - Add your EC2 Elastic IP to the **Network Access IP Whitelist** on your MongoDB Atlas Console.

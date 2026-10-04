@@ -1,7 +1,7 @@
 # Office Resource Management System (ORMS)
 
 > **Agile Software Development and DevOps Lab Mini-Project**  
-> Built with JavaScript (MERN Stack), Docker, Docker Compose, Jenkins CI/CD, and Kubernetes (AWS EC2 + MongoDB Atlas).
+> Built with JavaScript (MERN Stack), Docker, Docker Compose, and Kubernetes (AWS EC2 + MongoDB Atlas).
 
 ---
 
@@ -64,7 +64,6 @@ The primary academic objective of this project is to demonstrate **Agile develop
 - **Backend**: Node.js, Express.js, Mongoose ODM, JWT, bcryptjs, cookie-parser, CORS.
 - **Database**: MongoDB Atlas (Cloud Database Cluster).
 - **Containerization**: Docker, Docker Compose, Nginx (Alpine multi-stage frontend).
-- **CI/CD Pipeline**: Jenkins Declarative Pipeline (`Jenkinsfile`).
 - **Orchestration**: Kubernetes manifests (`k8s/` - Namespace, Deployments, Services, ConfigMaps, Secrets, Ingress, HPA).
 - **Testing**: Node.js Native Test Runner (`node:test`) + Supertest.
 
@@ -114,10 +113,8 @@ office-resource-management/
 │   ├── backend-hpa.yaml
 │   └── kustomization.yaml
 │
-├── scripts/                 # Automation scripts (setup, build, test, docker, deploy)
 ├── docs/                    # Architecture, API, Database, DevOps, and Deployment docs
 ├── docker-compose.yml       # Local multi-container orchestration
-├── Jenkinsfile              # Declarative CI/CD pipeline
 ├── .env.example
 └── README.md
 ```
@@ -192,20 +189,7 @@ Access the application:
 
 ---
 
-## 9. Jenkins CI/CD Pipeline
-
-The included `Jenkinsfile` defines a 7-stage automated pipeline:
-1. **Checkout**: Source code clone.
-2. **Install Dependencies**: Parallel `npm ci` for backend and frontend.
-3. **Run Automated Tests**: Executes `npm test` verifying business rules.
-4. **Build Frontend**: Compiles production assets.
-5. **Build Docker Images**: Builds backend and frontend images tagged with `$BUILD_NUMBER` and `latest`.
-6. **Push Docker Images**: Pushes container images to Docker Hub registry.
-7. **Deploy to Kubernetes**: Applies `k8s/` manifests to target cluster and monitors rollout status.
-
----
-
-## 10. Kubernetes Deployment
+## 9. Kubernetes Deployment
 
 Deploy to Kubernetes (Minikube, K3s on AWS EC2, or EKS):
 ```bash
@@ -222,7 +206,7 @@ kubectl apply -f k8s/backend-hpa.yaml
 
 ---
 
-## 11. Viva Voce Highlights & Key Concepts
+## 10. Viva Voce Highlights & Key Concepts
 
 1. **Why MongoDB Atlas instead of containerized Mongo in Kubernetes?**
    - In production, databases require persistent replication, automated backups, and disk scaling. Managing stateful database pods inside ephemeral Kubernetes clusters adds unnecessary operational complexity. Connecting Kubernetes workloads to MongoDB Atlas follows the 12-factor cloud-native principle.

@@ -14,8 +14,8 @@ This document explains the Agile Software Development and DevOps implementation 
                                                      │
                                                      ▼
     ┌──────────────┐     ┌──────────────┐     ┌──────────────┐
-    │  Kubernetes  │ <── │ Docker Image │ <── │   Jenkins    │
-    │  Deployment  │     │   Registry   │     │  CI Pipeline │
+    │  Kubernetes  │ <── │ Docker Image │ <── │  CI/CD Automated
+    │  Deployment  │     │   Registry   │     │ Pipeline Test│
     └──────┬───────┘     └──────────────┘     └──────────────┘
            │
            ▼
@@ -44,20 +44,7 @@ This document explains the Agile Software Development and DevOps implementation 
 
 ---
 
-## 3. Jenkins CI/CD Pipeline (`Jenkinsfile`)
-
-The Jenkinsfile implements an automated declarative pipeline:
-1. **Checkout**: Clones the active Git branch.
-2. **Install Dependencies**: Runs `npm ci` in parallel for backend and frontend.
-3. **Run Automated Tests**: Executes integration tests (`node --test tests/*.test.js`) verifying RBAC and booking conflict logic.
-4. **Build Frontend**: Compiles Vite bundle.
-5. **Build Docker Images**: Builds backend and frontend images tagged with `$BUILD_NUMBER` and `latest`.
-6. **Push Images**: Authenticates against Docker Hub using Jenkins credentials (`dockerhub-credentials`) and pushes the container images.
-7. **Deploy to Kubernetes**: Applies `k8s/` manifests to the target cluster and waits for rollout status confirmation.
-
----
-
-## 4. Kubernetes Architecture (`k8s/`)
+## 3. Kubernetes Architecture (`k8s/`)
 
 - **Namespace**: `office-management` isolates all system workloads.
 - **ConfigMap & Secret**: Separates runtime parameters from credentials (e.g. MongoDB Atlas connection string).
