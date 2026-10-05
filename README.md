@@ -61,8 +61,9 @@ The primary academic objective of this project is to demonstrate **Agile develop
 ## 4. Technology Stack
 
 - **Frontend**: React 18, Vite, React Router DOM v6, Tailwind CSS, Lucide React, Fetch API.
-- **Backend**: Node.js, Express.js, Mongoose ODM, JWT, bcryptjs, cookie-parser, CORS.
+- **Backend**: Node.js 22, Express.js, Mongoose ODM, JWT, bcryptjs, cookie-parser, CORS.
 - **Database**: MongoDB Atlas (Cloud Database Cluster).
+- **CI / Automation**: GitHub Actions (Node.js setup, caching, integration testing with MongoDB service container, production build, Docker build verification).
 - **Containerization**: Docker, Docker Compose, Nginx (Alpine multi-stage frontend).
 - **Orchestration**: Kubernetes manifests (`k8s/` - Namespace, Deployments, Services, ConfigMaps, Secrets, Ingress, HPA).
 - **Testing**: Node.js Native Test Runner (`node:test`) + Supertest.
@@ -73,6 +74,9 @@ The primary academic objective of this project is to demonstrate **Agile develop
 
 ```
 office-resource-management/
+├── .github/
+│   └── workflows/
+│       └── ci.yml           # GitHub Actions Continuous Integration pipeline
 ├── backend/
 │   ├── src/
 │   │   ├── config/          # db.js, env.js
@@ -86,7 +90,7 @@ office-resource-management/
 │   │   ├── app.js           # Express app setup
 │   │   └── server.js        # Server listener
 │   ├── tests/               # Automated integration & business logic tests
-│   ├── Dockerfile           # Node 18 Alpine container with healthcheck
+│   ├── Dockerfile           # Node 22 Alpine container with healthcheck
 │   └── package.json
 │
 ├── frontend/
@@ -206,7 +210,54 @@ kubectl apply -f k8s/backend-hpa.yaml
 
 ---
 
-## 10. Viva Voce Highlights & Key Concepts
+## 10. GitHub Actions CI Pipeline
+
+Continuous Integration (CI) is implemented using **GitHub Actions** via `.github/workflows/ci.yml`.
+
+### 1. Purpose of GitHub Actions
+GitHub Actions automatically verifies code health, executes backend integration tests, compiles the frontend production bundle, and builds container images on every code update before changes can be merged or deployed.
+
+### 2. Workflow Triggers
+The CI pipeline executes on:
+- Every `push` to `main` or `develop` branches.
+- Every `pull_request` targeting `main` or `develop` branches.
+
+### 3. CI Pipeline Stages
+1. **Repository Checkout**: Retrieves source code using `actions/checkout@v4`.
+2. **Node.js 22 Runtime Setup**: Configures Node.js 22 with automated npm dependency caching (`actions/setup-node@v4`).
+3. **Backend CI**:
+   - Clean dependency installation using `npm ci`.
+   - Executes automated tests via `npm test` against an isolated MongoDB service container (`mongo:6.0`).
+   - Validates RBAC enforcement, duplicate allocation prevention, and booking overlap business logic without exposing production credentials.
+4. **Frontend CI**:
+   - Clean dependency installation via `npm ci`.
+   - Production bundle compilation via `npm run build` using `VITE_API_URL=http://localhost:5000/api`.
+5. **Docker Build Verification**:
+   - Builds Backend image: `docker build -t office-resource-backend:ci ./backend`
+   - Builds Frontend image: `docker build --build-arg VITE_API_URL=http://localhost:5000/api -t office-resource-frontend:ci ./frontend`
+   - Confirms that Dockerfiles and production bundles build successfully in an isolated containerized environment.
+
+### 4. Failure Behavior
+The pipeline adheres to the **fail-fast** principle: if dependency installation fails, any backend test fails, the Vite build errors, or Docker build fails, the workflow immediately halts with a red ❌ failure status, blocking pull requests from merging.
+
+### 5. DevOps Architecture & Tooling Distinction
+
+| Tool | Role in this Project |
+|---|---|
+| **GitHub Actions** | **Automation / CI**: Runs automated tests, builds, and Docker validation on remote GitHub infrastructure. |
+| **Docker** | **Containerization**: Packages frontend and backend services with their runtime environments into standardized container images. |
+| **Docker Compose** | **Local Multi-Container Dev**: Coordinates multi-container startup (frontend + backend + local dev environments) on local machines. |
+| **Kubernetes** | **Container Orchestration**: Manages pod scaling, rolling updates, self-healing, Service discovery, ConfigMaps, and Ingress routing. |
+
+### 6. Why Kubernetes Deployment is Currently Manual
+- **Local Cluster Architecture**: The Kubernetes cluster runs locally via **Docker Desktop** on the developer's laptop (`localhost`).
+- **Network Isolation**: GitHub-hosted runners run in GitHub's remote cloud environment and cannot reach a private developer's localhost Kubernetes API without insecure third-party tunnels or self-hosted runners.
+- **Academic Separation of Concerns**: Keeping CI in GitHub Actions and deployment manual via `kubectl` ensures clean observability for grading and local development control.
+- **Future Roadmap**: When moving to cloud-managed Kubernetes (such as AWS EKS), GitHub Actions can be seamlessly extended with a Continuous Deployment (CD) job using secure OpenID Connect (OIDC) or cluster credentials.
+
+---
+
+## 11. Viva Voce Highlights & Key Concepts
 
 1. **Why MongoDB Atlas instead of containerized Mongo in Kubernetes?**
    - In production, databases require persistent replication, automated backups, and disk scaling. Managing stateful database pods inside ephemeral Kubernetes clusters adds unnecessary operational complexity. Connecting Kubernetes workloads to MongoDB Atlas follows the 12-factor cloud-native principle.
@@ -215,3 +266,5 @@ kubectl apply -f k8s/backend-hpa.yaml
      $S_2 < E_1 \text{ and } E_2 > S_1$. If this condition is met for any active booking on the same resource and date, the API returns `409 Conflict`.
 3. **How is RBAC secured against frontend tampering?**
    - The frontend role check only determines UI visibility. Every Express endpoint enforces `protect` (JWT validation) and `authorize('ADMIN')` (database verification of the user's role). Even if a user tampers with client-side state, unauthorized API requests return `403 Forbidden`.
+4. **Why use an ephemeral MongoDB service container in CI?**
+   - It eliminates the need to expose production MongoDB Atlas credentials or network IP whitelists inside GitHub Actions. Integration tests run against a pristine, temporary database container (`mongo:6.0`) initialized on the GitHub runner and destroyed when the workflow finishes.

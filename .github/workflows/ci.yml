@@ -1,0 +1,79 @@
+name: Office Resource Management CI
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+      - develop
+
+jobs:
+  test-and-build:
+    name: Test and Build
+    runs-on: ubuntu-latest
+
+    services:
+      mongodb:
+        image: mongo:6.0
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "mongosh --eval 'db.runCommand({ ping: 1 })'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22 (Backend)
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Install Backend Dependencies
+        working-directory: backend
+        run: npm ci
+
+      - name: Run Backend Tests
+        working-directory: backend
+        env:
+          MONGO_URI: mongodb://localhost:27017/office_ci_test_db
+          JWT_SECRET: ci_test_secret_key_12345
+          NODE_ENV: test
+        run: npm test
+
+      - name: Setup Node.js 22 (Frontend)
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install Frontend Dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Build Frontend
+        working-directory: frontend
+        env:
+          VITE_API_URL: http://localhost:5000/api
+        run: npm run build
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Backend Docker Image
+        run: docker build -t office-resource-backend:ci ./backend
+
+      - name: Build Frontend Docker Image
+        run: |
+          docker build \
+            --build-arg VITE_API_URL=http://localhost:5000/api \
+            -t office-resource-frontend:ci ./frontend
