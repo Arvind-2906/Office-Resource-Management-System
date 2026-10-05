@@ -20,12 +20,14 @@ const dashboardRoutes = require('./routes/dashboardRoutes');
 // Middleware
 const errorHandler = require('./middleware/errorMiddleware');
 const notFound = require('./middleware/notFoundMiddleware');
+const { register, metricsMiddleware } = require('./utils/metrics');
 
 const app = express();
 
 // Standard middlewares
 app.use(express.json());
 app.use(cookieParser());
+app.use(metricsMiddleware);
 app.use(
   cors({
     origin: [
@@ -41,6 +43,16 @@ app.use(
     allowedHeaders: ['Content-Type', 'Authorization']
   })
 );
+
+// Prometheus metrics endpoint for scraping
+app.get('/api/metrics', async (req, res) => {
+  try {
+    res.set('Content-Type', register.contentType);
+    res.end(await register.metrics());
+  } catch (err) {
+    res.status(500).end(err.message);
+  }
+});
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {

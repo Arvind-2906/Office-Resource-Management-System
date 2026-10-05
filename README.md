@@ -63,9 +63,10 @@ The primary academic objective of this project is to demonstrate **Agile develop
 - **Frontend**: React 18, Vite, React Router DOM v6, Tailwind CSS, Lucide React, Fetch API.
 - **Backend**: Node.js 22, Express.js, Mongoose ODM, JWT, bcryptjs, cookie-parser, CORS.
 - **Database**: MongoDB Atlas (Cloud Database Cluster).
+- **Monitoring & Observability**: Prometheus (scraping `/api/metrics`), Grafana (analytics dashboards on port 3000), prom-client.
 - **CI / Automation**: GitHub Actions (Node.js setup, caching, integration testing with MongoDB service container, production build, Docker build verification).
 - **Containerization**: Docker, Docker Compose, Nginx (Alpine multi-stage frontend).
-- **Orchestration**: Kubernetes manifests (`k8s/` - Namespace, Deployments, Services, ConfigMaps, Secrets, Ingress, HPA).
+- **Orchestration**: Kubernetes manifests (`k8s/` - Namespace, Deployments, Services, ConfigMaps, Secrets, Ingress, HPA, Prometheus, Grafana).
 - **Testing**: Node.js Native Test Runner (`node:test`) + Supertest.
 
 ---
@@ -86,8 +87,8 @@ office-resource-management/
 │   │   ├── routes/          # Express route definitions
 │   │   ├── seed/            # seedAdmin.js (initial admin, employee, and sample assets)
 │   │   ├── services/        # Business logic services
-│   │   ├── utils/           # apiResponse, jwt, logger
-│   │   ├── app.js           # Express app setup
+│   │   ├── utils/           # apiResponse, jwt, logger, metrics.js
+│   │   ├── app.js           # Express app setup with /api/metrics
 │   │   └── server.js        # Server listener
 │   ├── tests/               # Automated integration & business logic tests
 │   ├── Dockerfile           # Node 22 Alpine container with healthcheck
@@ -115,6 +116,12 @@ office-resource-management/
 │   ├── frontend-service.yaml
 │   ├── ingress.yaml
 │   ├── backend-hpa.yaml
+│   ├── prometheus-configmap.yaml
+│   ├── prometheus-deployment.yaml
+│   ├── prometheus-service.yaml
+│   ├── grafana-datasource-configmap.yaml
+│   ├── grafana-deployment.yaml
+│   ├── grafana-service.yaml
 │   └── kustomization.yaml
 │
 ├── docs/                    # Architecture, API, Database, DevOps, and Deployment docs
@@ -195,7 +202,12 @@ Access the application:
 
 ## 9. Kubernetes Deployment
 
-Deploy to Kubernetes (Minikube, K3s on AWS EC2, or EKS):
+Deploy to Kubernetes (Minikube, Docker Desktop, or Cloud K8s):
+```bash
+# Deploy all resources (App + Ingress + HPA + Prometheus + Grafana)
+kubectl apply -k k8s
+```
+Or apply individually:
 ```bash
 kubectl apply -f k8s/namespace.yaml
 kubectl apply -f k8s/configmap.yaml
@@ -206,6 +218,12 @@ kubectl apply -f k8s/frontend-deployment.yaml
 kubectl apply -f k8s/frontend-service.yaml
 kubectl apply -f k8s/ingress.yaml
 kubectl apply -f k8s/backend-hpa.yaml
+kubectl apply -f k8s/prometheus-configmap.yaml
+kubectl apply -f k8s/prometheus-deployment.yaml
+kubectl apply -f k8s/prometheus-service.yaml
+kubectl apply -f k8s/grafana-datasource-configmap.yaml
+kubectl apply -f k8s/grafana-deployment.yaml
+kubectl apply -f k8s/grafana-service.yaml
 ```
 
 ---
@@ -248,6 +266,8 @@ The pipeline adheres to the **fail-fast** principle: if dependency installation 
 | **Docker** | **Containerization**: Packages frontend and backend services with their runtime environments into standardized container images. |
 | **Docker Compose** | **Local Multi-Container Dev**: Coordinates multi-container startup (frontend + backend + local dev environments) on local machines. |
 | **Kubernetes** | **Container Orchestration**: Manages pod scaling, rolling updates, self-healing, Service discovery, ConfigMaps, and Ingress routing. |
+| **Prometheus** | **Metrics Collection**: Pulls time-series operational metrics from `/api/metrics` inside Kubernetes. |
+| **Grafana** | **Observability Dashboards**: Visualizes real-time request rates, API latency, and CPU/memory utilization. |
 
 ### 6. Why Kubernetes Deployment is Currently Manual
 - **Local Cluster Architecture**: The Kubernetes cluster runs locally via **Docker Desktop** on the developer's laptop (`localhost`).
@@ -257,7 +277,25 @@ The pipeline adheres to the **fail-fast** principle: if dependency installation 
 
 ---
 
-## 11. Viva Voce Highlights & Key Concepts
+## 11. Monitoring & Observability (Prometheus & Grafana)
+
+The project includes an enterprise-grade cloud-native monitoring architecture running natively inside the `office-management` Kubernetes namespace:
+
+### Live Monitoring Endpoints
+
+| Component | URL | Credentials | Role |
+|---|---|---|---|
+| **Prometheus Web UI** | **`http://localhost:9090`** | None | Scrapes `/api/metrics` from `backend-service:5000` every 5 seconds. |
+| **Grafana Dashboards** | **`http://localhost:3000`** | `admin` / `admin` | Real-time interactive visual graphs and alerts. |
+
+### Key Metrics Tracked
+- **`office_http_requests_total`**: Total API requests segmented by HTTP method (`GET`, `POST`), route (`/api/bookings`, `/api/resources`), and status code (`200`, `400`, `409`, `403`).
+- **`office_http_request_duration_seconds`**: API latency histogram to detect slow database queries or bottlenecks.
+- **Node.js Runtime Metrics**: Heap memory used (`office_nodejs_heap_size_used_bytes`), active event loop handles, and GC durations.
+
+---
+
+## 12. Viva Voce Highlights & Key Concepts
 
 1. **Why MongoDB Atlas instead of containerized Mongo in Kubernetes?**
    - In production, databases require persistent replication, automated backups, and disk scaling. Managing stateful database pods inside ephemeral Kubernetes clusters adds unnecessary operational complexity. Connecting Kubernetes workloads to MongoDB Atlas follows the 12-factor cloud-native principle.
@@ -268,3 +306,5 @@ The pipeline adheres to the **fail-fast** principle: if dependency installation 
    - The frontend role check only determines UI visibility. Every Express endpoint enforces `protect` (JWT validation) and `authorize('ADMIN')` (database verification of the user's role). Even if a user tampers with client-side state, unauthorized API requests return `403 Forbidden`.
 4. **Why use an ephemeral MongoDB service container in CI?**
    - It eliminates the need to expose production MongoDB Atlas credentials or network IP whitelists inside GitHub Actions. Integration tests run against a pristine, temporary database container (`mongo:6.0`) initialized on the GitHub runner and destroyed when the workflow finishes.
+5. **How does Prometheus discover and scrape Kubernetes workloads?**
+   - Prometheus runs inside the same Kubernetes namespace and utilizes internal kube-DNS resolution to query `http://backend-service:5000/api/metrics`. Grafana is auto-provisioned via a ConfigMap volume mount to connect to `http://prometheus-service:9090` on boot.

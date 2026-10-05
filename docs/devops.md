@@ -55,3 +55,42 @@ This document explains the Agile Software Development and DevOps implementation 
 - **Ingress**: Routes incoming HTTP traffic based on path prefixes (`/api` -> backend, `/` -> frontend).
 - **Horizontal Pod Autoscaler (HPA)**: Automatically scales backend pods from 2 to 5 based on 70% CPU threshold.
 - **Database Boundary Rule**: MongoDB Atlas runs outside the cluster for high availability and zero maintenance overhead.
+
+---
+
+## 4. Monitoring & Observability Architecture (Prometheus & Grafana)
+
+The monitoring stack runs natively inside the `office-management` Kubernetes namespace:
+
+```
+┌────────────────────────────────────────────────────────┐
+│             Kubernetes: office-management              │
+│                                                        │
+│  ┌────────────────────┐          ┌──────────────────┐  │
+│  │  backend-service   │ <─────── │    Prometheus    │  │
+│  │ (Port 5000/metrics)│  Scrapes │   (Port 9090)    │  │
+│  └────────────────────┘          └────────┬─────────┘  │
+│                                           │            │
+│                                           │ Queries    │
+│                                           ▼            │
+│                                  ┌──────────────────┐  │
+│                                  │     Grafana      │  │
+│                                  │   (Port 3000)    │  │
+│                                  └──────────────────┘  │
+└────────────────────────────────────────────────────────┘
+```
+
+1. **Metrics Instrumentor**:
+   - `backend/src/utils/metrics.js` collects default Node.js runtime metrics (heap memory, event loop lag, GC duration) with prefix `office_`.
+   - Custom metrics:
+     - `office_http_requests_total`: Counter tracking total requests tagged by method, route, and HTTP status code.
+     - `office_http_request_duration_seconds`: Histogram tracking request latency distribution.
+   - Route `GET /api/metrics` is exposed for Prometheus scrapers.
+
+2. **Prometheus Manifests**:
+   - `k8s/prometheus-configmap.yaml`: Scrapes `backend-service:5000/api/metrics` every 5 seconds.
+   - `k8s/prometheus-deployment.yaml` & `k8s/prometheus-service.yaml`: Runs `prom/prometheus:v2.51.0` and exposes web UI on port `9090` (`http://localhost:9090`).
+
+3. **Grafana Manifests**:
+   - `k8s/grafana-datasource-configmap.yaml`: Auto-provisions Prometheus as the default datasource at startup (`http://prometheus-service:9090`).
+   - `k8s/grafana-deployment.yaml` & `k8s/grafana-service.yaml`: Runs `grafana/grafana:10.4.0` with credentials `admin`/`admin` on port `3000` (`http://localhost:3000`).

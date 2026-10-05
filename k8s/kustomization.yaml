@@ -13,3 +13,9 @@ resources:
   - frontend-service.yaml
   - ingress.yaml
   - backend-hpa.yaml
+  - prometheus-configmap.yaml
+  - prometheus-deployment.yaml
+  - prometheus-service.yaml
+  - grafana-datasource-configmap.yaml
+  - grafana-deployment.yaml
+  - grafana-service.yaml
