@@ -17,5 +17,6 @@ resources:
   - prometheus-deployment.yaml
   - prometheus-service.yaml
   - grafana-datasource-configmap.yaml
+  - grafana-dashboard-configmap.yaml
   - grafana-deployment.yaml
   - grafana-service.yaml
