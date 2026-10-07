@@ -316,7 +316,7 @@ office-resource-management/
 ├── k8s/                               # Kubernetes declarative manifests
 │   ├── namespace.yaml                 # office-management namespace isolation
 │   ├── configmap.yaml                 # Runtime environment parameters
-│   ├── secret.yaml                    # Base64 encoded MongoDB URI & JWT secret
+│   ├── secret.example.yaml            # Template for MongoDB URI & JWT secret (secret.yaml is gitignored)
 │   ├── backend-deployment.yaml        # 2 Replicas, liveness/readiness probes, resources
 │   ├── backend-service.yaml           # LoadBalancer exposing backend port 5000
 │   ├── frontend-deployment.yaml       # 2 Replicas running Nginx SPA container

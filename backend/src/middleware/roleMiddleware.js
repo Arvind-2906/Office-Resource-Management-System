@@ -1,6 +1,6 @@
-const ApiResponse = require('../utils/apiResponse');
+import ApiResponse from '../utils/apiResponse.js';
 
-const authorize = (...roles) => {
+export const authorize = (...roles) => {
   return (req, res, next) => {
     if (!req.user) {
       return ApiResponse.unauthorized(res, 'Authentication required.');
@@ -17,4 +17,4 @@ const authorize = (...roles) => {
   };
 };
 
-module.exports = { authorize };
+export default { authorize };

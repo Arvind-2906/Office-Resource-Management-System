@@ -1,13 +1,13 @@
-const jwt = require('jsonwebtoken');
-const env = require('../config/env');
+import jwt from 'jsonwebtoken';
+import env from '../config/env.js';
 
-const generateToken = (payload) => {
+export const generateToken = (payload) => {
   return jwt.sign(payload, env.JWT_SECRET, {
     expiresIn: env.JWT_EXPIRES_IN
   });
 };
 
-const verifyToken = (token) => {
+export const verifyToken = (token) => {
   try {
     return jwt.verify(token, env.JWT_SECRET);
   } catch (err) {
@@ -15,7 +15,7 @@ const verifyToken = (token) => {
   }
 };
 
-const sendTokenResponse = (user, statusCode, res, message = 'Success') => {
+export const sendTokenResponse = (user, statusCode, res, message = 'Success') => {
   const token = generateToken({
     id: user._id,
     role: user.role,
@@ -49,7 +49,7 @@ const sendTokenResponse = (user, statusCode, res, message = 'Success') => {
   });
 };
 
-module.exports = {
+export default {
   generateToken,
   verifyToken,
   sendTokenResponse

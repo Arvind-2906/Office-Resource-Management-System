@@ -1,6 +1,6 @@
-const client = require('prom-client');
+import client from 'prom-client';
 
-const register = new client.Registry();
+export const register = new client.Registry();
 
 client.collectDefaultMetrics({
   register,
@@ -22,7 +22,7 @@ const httpRequestDuration = new client.Histogram({
 });
 register.registerMetric(httpRequestDuration);
 
-const metricsMiddleware = (req, res, next) => {
+export const metricsMiddleware = (req, res, next) => {
   if (req.path === '/api/metrics') {
     return next();
   }
@@ -47,7 +47,7 @@ const metricsMiddleware = (req, res, next) => {
   next();
 };
 
-module.exports = {
+export default {
   register,
   metricsMiddleware
 };

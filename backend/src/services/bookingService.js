@@ -1,9 +1,9 @@
-const Booking = require('../models/Booking');
-const Resource = require('../models/Resource');
-const { createNotification } = require('./notificationService');
-const { logActivity } = require('./activityService');
+import Booking from '../models/Booking.js';
+import Resource from '../models/Resource.js';
+import { createNotification } from './notificationService.js';
+import { logActivity } from './activityService.js';
 
-const createBooking = async (userId, userRole, bookingData) => {
+export const createBooking = async (userId, userRole, bookingData) => {
   const { resourceId, title, date, startTime, endTime } = bookingData;
 
   // Validate start time < end time
@@ -88,7 +88,7 @@ const createBooking = async (userId, userRole, bookingData) => {
   ]);
 };
 
-const getBookings = async (user, query = {}) => {
+export const getBookings = async (user, query = {}) => {
   const filter = {};
 
   if (user.role === 'EMPLOYEE') {
@@ -113,7 +113,7 @@ const getBookings = async (user, query = {}) => {
     .sort({ date: 1, startTime: 1 });
 };
 
-const getBookingById = async (id, user) => {
+export const getBookingById = async (id, user) => {
   const booking = await Booking.findById(id)
     .populate('resource', 'name resourceId category location isBookable')
     .populate('bookedBy', 'name email department');
@@ -133,7 +133,7 @@ const getBookingById = async (id, user) => {
   return booking;
 };
 
-const cancelBooking = async (id, user) => {
+export const cancelBooking = async (id, user) => {
   const booking = await Booking.findById(id).populate('resource');
   if (!booking) {
     const error = new Error('Booking not found');
@@ -173,7 +173,7 @@ const cancelBooking = async (id, user) => {
   return booking;
 };
 
-module.exports = {
+export default {
   createBooking,
   getBookings,
   getBookingById,

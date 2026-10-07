@@ -1,7 +1,7 @@
-const activityService = require('../services/activityService');
-const ApiResponse = require('../utils/apiResponse');
+import activityService from '../services/activityService.js';
+import ApiResponse from '../utils/apiResponse.js';
 
-const getActivityLogs = async (req, res, next) => {
+export const getActivityLogs = async (req, res, next) => {
   try {
     const limit = parseInt(req.query.limit, 10) || 100;
     const logs = await activityService.getActivityLogs(limit);
@@ -11,6 +11,6 @@ const getActivityLogs = async (req, res, next) => {
   }
 };
 
-module.exports = {
+export default {
   getActivityLogs
 };

@@ -1,7 +1,7 @@
-const notificationService = require('../services/notificationService');
-const ApiResponse = require('../utils/apiResponse');
+import notificationService from '../services/notificationService.js';
+import ApiResponse from '../utils/apiResponse.js';
 
-const getNotifications = async (req, res, next) => {
+export const getNotifications = async (req, res, next) => {
   try {
     const notifications = await notificationService.getUserNotifications(req.user._id);
     return ApiResponse.success(res, 'Notifications retrieved', { notifications });
@@ -10,7 +10,7 @@ const getNotifications = async (req, res, next) => {
   }
 };
 
-const markAsRead = async (req, res, next) => {
+export const markAsRead = async (req, res, next) => {
   try {
     const notification = await notificationService.markAsRead(req.params.id, req.user._id);
     return ApiResponse.success(res, 'Notification marked as read', { notification });
@@ -19,7 +19,7 @@ const markAsRead = async (req, res, next) => {
   }
 };
 
-const markAllAsRead = async (req, res, next) => {
+export const markAllAsRead = async (req, res, next) => {
   try {
     await notificationService.markAllAsRead(req.user._id);
     return ApiResponse.success(res, 'All notifications marked as read', {});
@@ -28,7 +28,7 @@ const markAllAsRead = async (req, res, next) => {
   }
 };
 
-module.exports = {
+export default {
   getNotifications,
   markAsRead,
   markAllAsRead

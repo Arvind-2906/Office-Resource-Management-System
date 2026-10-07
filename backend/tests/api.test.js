@@ -1,14 +1,14 @@
-const { test, describe, before, after } = require('node:test');
-const assert = require('node:assert');
-const request = require('supertest');
-const mongoose = require('mongoose');
-const app = require('../src/app');
-const connectDB = require('../src/config/db');
-const User = require('../src/models/User');
-const Resource = require('../src/models/Resource');
-const Booking = require('../src/models/Booking');
-const ResourceRequest = require('../src/models/ResourceRequest');
-const Allocation = require('../src/models/Allocation');
+import { test, describe, before, after } from 'node:test';
+import assert from 'node:assert';
+import request from 'supertest';
+import mongoose from 'mongoose';
+import app from '../src/app.js';
+import connectDB from '../src/config/db.js';
+import User from '../src/models/User.js';
+import Resource from '../src/models/Resource.js';
+import Booking from '../src/models/Booking.js';
+import ResourceRequest from '../src/models/ResourceRequest.js';
+import Allocation from '../src/models/Allocation.js';
 
 describe('Office Resource Management System - API & Business Logic Tests', () => {
   let adminToken = '';

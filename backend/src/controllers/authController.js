@@ -1,8 +1,8 @@
-const authService = require('../services/authService');
-const { sendTokenResponse } = require('../utils/jwt');
-const ApiResponse = require('../utils/apiResponse');
+import authService from '../services/authService.js';
+import { sendTokenResponse } from '../utils/jwt.js';
+import ApiResponse from '../utils/apiResponse.js';
 
-const signup = async (req, res, next) => {
+export const signup = async (req, res, next) => {
   try {
     const user = await authService.signup(req.body);
     return sendTokenResponse(user, 201, res, 'Account created successfully');
@@ -11,7 +11,7 @@ const signup = async (req, res, next) => {
   }
 };
 
-const login = async (req, res, next) => {
+export const login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
     const user = await authService.login(email, password);
@@ -21,7 +21,7 @@ const login = async (req, res, next) => {
   }
 };
 
-const logout = async (req, res) => {
+export const logout = async (req, res) => {
   res.cookie('token', 'none', {
     expires: new Date(Date.now() + 5 * 1000),
     httpOnly: true
@@ -29,7 +29,7 @@ const logout = async (req, res) => {
   return ApiResponse.success(res, 'Logged out successfully', {});
 };
 
-const getMe = async (req, res, next) => {
+export const getMe = async (req, res, next) => {
   try {
     const user = await authService.getMe(req.user._id);
     return ApiResponse.success(res, 'Current user profile retrieved', { user });
@@ -38,7 +38,7 @@ const getMe = async (req, res, next) => {
   }
 };
 
-module.exports = {
+export default {
   signup,
   login,
   logout,

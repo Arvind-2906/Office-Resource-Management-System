@@ -1,10 +1,10 @@
-const Maintenance = require('../models/Maintenance');
-const Resource = require('../models/Resource');
-const User = require('../models/User');
-const { createNotification } = require('./notificationService');
-const { logActivity } = require('./activityService');
+import Maintenance from '../models/Maintenance.js';
+import Resource from '../models/Resource.js';
+import User from '../models/User.js';
+import { createNotification } from './notificationService.js';
+import { logActivity } from './activityService.js';
 
-const reportMaintenance = async (userId, data) => {
+export const reportMaintenance = async (userId, data) => {
   const { resourceId, issue, priority } = data;
 
   const resource = await Resource.findById(resourceId);
@@ -50,7 +50,7 @@ const reportMaintenance = async (userId, data) => {
   ]);
 };
 
-const getMaintenanceList = async (user, query = {}) => {
+export const getMaintenanceList = async (user, query = {}) => {
   const filter = {};
 
   if (user.role === 'EMPLOYEE') {
@@ -73,7 +73,7 @@ const getMaintenanceList = async (user, query = {}) => {
     .sort({ createdAt: -1 });
 };
 
-const getMaintenanceById = async (id, user) => {
+export const getMaintenanceById = async (id, user) => {
   const record = await Maintenance.findById(id)
     .populate('resource', 'name resourceId category location status')
     .populate('reportedBy', 'name email department');
@@ -93,7 +93,7 @@ const getMaintenanceById = async (id, user) => {
   return record;
 };
 
-const updateMaintenanceStatus = async (id, adminId, status, resolutionNote) => {
+export const updateMaintenanceStatus = async (id, adminId, status, resolutionNote) => {
   const record = await Maintenance.findById(id).populate('resource');
   if (!record) {
     const error = new Error('Maintenance record not found');
@@ -149,7 +149,7 @@ const updateMaintenanceStatus = async (id, adminId, status, resolutionNote) => {
   return record;
 };
 
-module.exports = {
+export default {
   reportMaintenance,
   getMaintenanceList,
   getMaintenanceById,

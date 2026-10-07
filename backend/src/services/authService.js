@@ -1,7 +1,7 @@
-const User = require('../models/User');
-const { logActivity } = require('./activityService');
+import User from '../models/User.js';
+import { logActivity } from './activityService.js';
 
-const signup = async (userData) => {
+export const signup = async (userData) => {
   const { name, email, password, department, phone } = userData;
 
   const existingUser = await User.findOne({ email });
@@ -27,7 +27,7 @@ const signup = async (userData) => {
   return user;
 };
 
-const login = async (email, password) => {
+export const login = async (email, password) => {
   if (!email || !password) {
     const error = new Error('Please provide an email and password');
     error.statusCode = 400;
@@ -59,7 +59,7 @@ const login = async (email, password) => {
   return user;
 };
 
-const getMe = async (userId) => {
+export const getMe = async (userId) => {
   const user = await User.findById(userId);
   if (!user) {
     const error = new Error('User not found');
@@ -69,7 +69,7 @@ const getMe = async (userId) => {
   return user;
 };
 
-module.exports = {
+export default {
   signup,
   login,
   getMe

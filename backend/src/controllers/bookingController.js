@@ -1,7 +1,7 @@
-const bookingService = require('../services/bookingService');
-const ApiResponse = require('../utils/apiResponse');
+import bookingService from '../services/bookingService.js';
+import ApiResponse from '../utils/apiResponse.js';
 
-const createBooking = async (req, res, next) => {
+export const createBooking = async (req, res, next) => {
   try {
     const { resourceId, title, date, startTime, endTime } = req.body;
     if (!resourceId || !title || !date || !startTime || !endTime) {
@@ -15,7 +15,7 @@ const createBooking = async (req, res, next) => {
   }
 };
 
-const getBookings = async (req, res, next) => {
+export const getBookings = async (req, res, next) => {
   try {
     const bookings = await bookingService.getBookings(req.user, req.query);
     return ApiResponse.success(res, 'Bookings retrieved successfully', { bookings });
@@ -24,7 +24,7 @@ const getBookings = async (req, res, next) => {
   }
 };
 
-const getBookingById = async (req, res, next) => {
+export const getBookingById = async (req, res, next) => {
   try {
     const booking = await bookingService.getBookingById(req.params.id, req.user);
     return ApiResponse.success(res, 'Booking retrieved successfully', { booking });
@@ -33,7 +33,7 @@ const getBookingById = async (req, res, next) => {
   }
 };
 
-const cancelBooking = async (req, res, next) => {
+export const cancelBooking = async (req, res, next) => {
   try {
     const booking = await bookingService.cancelBooking(req.params.id, req.user);
     return ApiResponse.success(res, 'Booking cancelled successfully', { booking });
@@ -42,7 +42,7 @@ const cancelBooking = async (req, res, next) => {
   }
 };
 
-module.exports = {
+export default {
   createBooking,
   getBookings,
   getBookingById,

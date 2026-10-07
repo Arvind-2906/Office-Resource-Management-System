@@ -1,7 +1,7 @@
-const resourceService = require('../services/resourceService');
-const ApiResponse = require('../utils/apiResponse');
+import resourceService from '../services/resourceService.js';
+import ApiResponse from '../utils/apiResponse.js';
 
-const getAllResources = async (req, res, next) => {
+export const getAllResources = async (req, res, next) => {
   try {
     const resources = await resourceService.getAllResources(req.query);
     return ApiResponse.success(res, 'Resources retrieved successfully', { resources });
@@ -10,7 +10,7 @@ const getAllResources = async (req, res, next) => {
   }
 };
 
-const getResourceById = async (req, res, next) => {
+export const getResourceById = async (req, res, next) => {
   try {
     const resource = await resourceService.getResourceById(req.params.id);
     return ApiResponse.success(res, 'Resource details retrieved', { resource });
@@ -19,7 +19,7 @@ const getResourceById = async (req, res, next) => {
   }
 };
 
-const createResource = async (req, res, next) => {
+export const createResource = async (req, res, next) => {
   try {
     const resource = await resourceService.createResource(req.body, req.user._id);
     return ApiResponse.created(res, 'Resource created successfully', { resource });
@@ -28,7 +28,7 @@ const createResource = async (req, res, next) => {
   }
 };
 
-const updateResource = async (req, res, next) => {
+export const updateResource = async (req, res, next) => {
   try {
     const resource = await resourceService.updateResource(req.params.id, req.body, req.user._id);
     return ApiResponse.success(res, 'Resource updated successfully', { resource });
@@ -37,7 +37,7 @@ const updateResource = async (req, res, next) => {
   }
 };
 
-const updateResourceStatus = async (req, res, next) => {
+export const updateResourceStatus = async (req, res, next) => {
   try {
     const { status } = req.body;
     const resource = await resourceService.updateResourceStatus(req.params.id, status, req.user._id);
@@ -47,7 +47,7 @@ const updateResourceStatus = async (req, res, next) => {
   }
 };
 
-const deleteResource = async (req, res, next) => {
+export const deleteResource = async (req, res, next) => {
   try {
     const result = await resourceService.deleteResource(req.params.id, req.user._id);
     return ApiResponse.success(res, result.message, {});
@@ -56,7 +56,7 @@ const deleteResource = async (req, res, next) => {
   }
 };
 
-module.exports = {
+export default {
   getAllResources,
   getResourceById,
   createResource,

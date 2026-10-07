@@ -1,5 +1,5 @@
-const ApiResponse = require('../utils/apiResponse');
-const env = require('../config/env');
+import ApiResponse from '../utils/apiResponse.js';
+import env from '../config/env.js';
 
 const errorHandler = (err, req, res, next) => {
   let error = { ...err };
@@ -46,4 +46,4 @@ const errorHandler = (err, req, res, next) => {
   );
 };
 
-module.exports = errorHandler;
+export default errorHandler;

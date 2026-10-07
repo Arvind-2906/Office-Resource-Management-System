@@ -1,8 +1,9 @@
-const express = require('express');
+import express from 'express';
+import requestController from '../controllers/requestController.js';
+import { protect } from '../middleware/authMiddleware.js';
+import { authorize } from '../middleware/roleMiddleware.js';
+
 const router = express.Router();
-const requestController = require('../controllers/requestController');
-const { protect } = require('../middleware/authMiddleware');
-const { authorize } = require('../middleware/roleMiddleware');
 
 router.use(protect);
 
@@ -14,4 +15,4 @@ router.post('/', authorize('EMPLOYEE'), requestController.createRequest);
 router.patch('/:id/approve', authorize('ADMIN'), requestController.approveRequest);
 router.patch('/:id/reject', authorize('ADMIN'), requestController.rejectRequest);
 
-module.exports = router;
+export default router;

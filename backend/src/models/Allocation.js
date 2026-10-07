@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const allocationSchema = new mongoose.Schema(
   {
@@ -49,4 +49,5 @@ const allocationSchema = new mongoose.Schema(
 allocationSchema.index({ resource: 1, status: 1 });
 allocationSchema.index({ employee: 1, status: 1 });
 
-module.exports = mongoose.model('Allocation', allocationSchema);
+const Allocation = mongoose.model('Allocation', allocationSchema);
+export default Allocation;

@@ -1,7 +1,8 @@
-const express = require('express');
+import express from 'express';
+import bookingController from '../controllers/bookingController.js';
+import { protect } from '../middleware/authMiddleware.js';
+
 const router = express.Router();
-const bookingController = require('../controllers/bookingController');
-const { protect } = require('../middleware/authMiddleware');
 
 router.use(protect);
 
@@ -10,4 +11,4 @@ router.get('/:id', bookingController.getBookingById);
 router.post('/', bookingController.createBooking);
 router.patch('/:id/cancel', bookingController.cancelBooking);
 
-module.exports = router;
+export default router;

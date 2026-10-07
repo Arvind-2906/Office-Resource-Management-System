@@ -1,9 +1,9 @@
-const jwt = require('jsonwebtoken');
-const env = require('../config/env');
-const User = require('../models/User');
-const ApiResponse = require('../utils/apiResponse');
+import jwt from 'jsonwebtoken';
+import env from '../config/env.js';
+import User from '../models/User.js';
+import ApiResponse from '../utils/apiResponse.js';
 
-const protect = async (req, res, next) => {
+export const protect = async (req, res, next) => {
   let token;
 
   // 1. Check cookies
@@ -38,4 +38,4 @@ const protect = async (req, res, next) => {
   }
 };
 
-module.exports = { protect };
+export default { protect };

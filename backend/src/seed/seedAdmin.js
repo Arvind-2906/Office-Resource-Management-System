@@ -1,9 +1,9 @@
-const mongoose = require('mongoose');
-const connectDB = require('../config/db');
-const User = require('../models/User');
-const Resource = require('../models/Resource');
-const ActivityLog = require('../models/ActivityLog');
-const logger = require('../utils/logger');
+import mongoose from 'mongoose';
+import connectDB from '../config/db.js';
+import User from '../models/User.js';
+import Resource from '../models/Resource.js';
+import ActivityLog from '../models/ActivityLog.js';
+import logger from '../utils/logger.js';
 
 const seedData = async () => {
   try {

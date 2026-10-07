@@ -2,6 +2,7 @@
   "name": "office-resource-management-backend",
   "version": "1.0.0",
   "description": "Backend API for Office Resource Management System (Agile + DevOps Lab)",
+  "type": "module",
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",

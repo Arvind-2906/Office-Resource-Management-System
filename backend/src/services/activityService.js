@@ -1,6 +1,6 @@
-const ActivityLog = require('../models/ActivityLog');
+import ActivityLog from '../models/ActivityLog.js';
 
-const logActivity = async (userId, action, entity, entityId, description) => {
+export const logActivity = async (userId, action, entity, entityId, description) => {
   try {
     return await ActivityLog.create({
       user: userId,
@@ -14,14 +14,14 @@ const logActivity = async (userId, action, entity, entityId, description) => {
   }
 };
 
-const getActivityLogs = async (limit = 100) => {
+export const getActivityLogs = async (limit = 100) => {
   return await ActivityLog.find()
     .populate('user', 'name email role')
     .sort({ timestamp: -1 })
     .limit(limit);
 };
 
-module.exports = {
+export default {
   logActivity,
   getActivityLogs
 };

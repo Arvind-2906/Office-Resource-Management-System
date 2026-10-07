@@ -1,10 +1,10 @@
-const ResourceRequest = require('../models/ResourceRequest');
-const Resource = require('../models/Resource');
-const Allocation = require('../models/Allocation');
-const { createNotification } = require('./notificationService');
-const { logActivity } = require('./activityService');
+import ResourceRequest from '../models/ResourceRequest.js';
+import Resource from '../models/Resource.js';
+import Allocation from '../models/Allocation.js';
+import { createNotification } from './notificationService.js';
+import { logActivity } from './activityService.js';
 
-const createRequest = async (employeeId, resourceId, reason) => {
+export const createRequest = async (employeeId, resourceId, reason) => {
   const resource = await Resource.findById(resourceId);
   if (!resource) {
     const error = new Error('Resource not found');
@@ -52,7 +52,7 @@ const createRequest = async (employeeId, resourceId, reason) => {
   ]);
 };
 
-const getRequests = async (user, query = {}) => {
+export const getRequests = async (user, query = {}) => {
   const filter = {};
 
   // Employees can only see their own requests
@@ -73,7 +73,7 @@ const getRequests = async (user, query = {}) => {
     .sort({ requestedAt: -1 });
 };
 
-const getRequestById = async (id, user) => {
+export const getRequestById = async (id, user) => {
   const request = await ResourceRequest.findById(id)
     .populate('resource', 'name resourceId category location status')
     .populate('employee', 'name email department')
@@ -94,7 +94,7 @@ const getRequestById = async (id, user) => {
   return request;
 };
 
-const approveRequest = async (requestId, adminId, expectedReturnDate, notes) => {
+export const approveRequest = async (requestId, adminId, expectedReturnDate, notes) => {
   const request = await ResourceRequest.findById(requestId).populate('resource');
   if (!request) {
     const error = new Error('Request not found');
@@ -158,7 +158,7 @@ const approveRequest = async (requestId, adminId, expectedReturnDate, notes) => 
   return { request, allocation };
 };
 
-const rejectRequest = async (requestId, adminId, rejectionReason) => {
+export const rejectRequest = async (requestId, adminId, rejectionReason) => {
   const request = await ResourceRequest.findById(requestId).populate('resource');
   if (!request) {
     const error = new Error('Request not found');
@@ -197,7 +197,7 @@ const rejectRequest = async (requestId, adminId, rejectionReason) => {
   return request;
 };
 
-module.exports = {
+export default {
   createRequest,
   getRequests,
   getRequestById,

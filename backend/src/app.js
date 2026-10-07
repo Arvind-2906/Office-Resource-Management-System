@@ -1,26 +1,26 @@
-const express = require('express');
-const cors = require('cors');
-const cookieParser = require('cookie-parser');
-const mongoose = require('mongoose');
-const env = require('./config/env');
-const ApiResponse = require('./utils/apiResponse');
+import express from 'express';
+import cors from 'cors';
+import cookieParser from 'cookie-parser';
+import mongoose from 'mongoose';
+import env from './config/env.js';
+import ApiResponse from './utils/apiResponse.js';
 
 // Import routes
-const authRoutes = require('./routes/authRoutes');
-const userRoutes = require('./routes/userRoutes');
-const resourceRoutes = require('./routes/resourceRoutes');
-const requestRoutes = require('./routes/requestRoutes');
-const allocationRoutes = require('./routes/allocationRoutes');
-const bookingRoutes = require('./routes/bookingRoutes');
-const maintenanceRoutes = require('./routes/maintenanceRoutes');
-const notificationRoutes = require('./routes/notificationRoutes');
-const activityRoutes = require('./routes/activityRoutes');
-const dashboardRoutes = require('./routes/dashboardRoutes');
+import authRoutes from './routes/authRoutes.js';
+import userRoutes from './routes/userRoutes.js';
+import resourceRoutes from './routes/resourceRoutes.js';
+import requestRoutes from './routes/requestRoutes.js';
+import allocationRoutes from './routes/allocationRoutes.js';
+import bookingRoutes from './routes/bookingRoutes.js';
+import maintenanceRoutes from './routes/maintenanceRoutes.js';
+import notificationRoutes from './routes/notificationRoutes.js';
+import activityRoutes from './routes/activityRoutes.js';
+import dashboardRoutes from './routes/dashboardRoutes.js';
 
 // Middleware
-const errorHandler = require('./middleware/errorMiddleware');
-const notFound = require('./middleware/notFoundMiddleware');
-const { register, metricsMiddleware } = require('./utils/metrics');
+import errorHandler from './middleware/errorMiddleware.js';
+import notFound from './middleware/notFoundMiddleware.js';
+import { register, metricsMiddleware } from './utils/metrics.js';
 
 const app = express();
 
@@ -84,4 +84,4 @@ app.use('/api/dashboard', dashboardRoutes);
 app.use(notFound);
 app.use(errorHandler);
 
-module.exports = app;
+export default app;

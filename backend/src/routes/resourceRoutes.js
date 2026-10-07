@@ -1,8 +1,9 @@
-const express = require('express');
+import express from 'express';
+import resourceController from '../controllers/resourceController.js';
+import { protect } from '../middleware/authMiddleware.js';
+import { authorize } from '../middleware/roleMiddleware.js';
+
 const router = express.Router();
-const resourceController = require('../controllers/resourceController');
-const { protect } = require('../middleware/authMiddleware');
-const { authorize } = require('../middleware/roleMiddleware');
 
 router.use(protect);
 
@@ -15,4 +16,4 @@ router.put('/:id', authorize('ADMIN'), resourceController.updateResource);
 router.patch('/:id/status', authorize('ADMIN'), resourceController.updateResourceStatus);
 router.delete('/:id', authorize('ADMIN'), resourceController.deleteResource);
 
-module.exports = router;
+export default router;

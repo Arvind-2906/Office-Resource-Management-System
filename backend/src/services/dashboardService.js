@@ -1,12 +1,12 @@
-const Resource = require('../models/Resource');
-const ResourceRequest = require('../models/ResourceRequest');
-const Allocation = require('../models/Allocation');
-const Booking = require('../models/Booking');
-const Maintenance = require('../models/Maintenance');
-const ActivityLog = require('../models/ActivityLog');
-const Notification = require('../models/Notification');
+import Resource from '../models/Resource.js';
+import ResourceRequest from '../models/ResourceRequest.js';
+import Allocation from '../models/Allocation.js';
+import Booking from '../models/Booking.js';
+import Maintenance from '../models/Maintenance.js';
+import ActivityLog from '../models/ActivityLog.js';
+import Notification from '../models/Notification.js';
 
-const getAdminDashboard = async () => {
+export const getAdminDashboard = async () => {
   const [
     totalResources,
     availableResources,
@@ -38,7 +38,7 @@ const getAdminDashboard = async () => {
   };
 };
 
-const getEmployeeDashboard = async (employeeId) => {
+export const getEmployeeDashboard = async (employeeId) => {
   const [
     myAllocations,
     myPendingRequests,
@@ -76,7 +76,7 @@ const getEmployeeDashboard = async (employeeId) => {
   };
 };
 
-module.exports = {
+export default {
   getAdminDashboard,
   getEmployeeDashboard
 };

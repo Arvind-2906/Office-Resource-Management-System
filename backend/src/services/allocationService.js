@@ -1,10 +1,10 @@
-const Allocation = require('../models/Allocation');
-const Resource = require('../models/Resource');
-const User = require('../models/User');
-const { createNotification } = require('./notificationService');
-const { logActivity } = require('./activityService');
+import Allocation from '../models/Allocation.js';
+import Resource from '../models/Resource.js';
+import User from '../models/User.js';
+import { createNotification } from './notificationService.js';
+import { logActivity } from './activityService.js';
 
-const getAllocations = async (user, query = {}) => {
+export const getAllocations = async (user, query = {}) => {
   const filter = {};
 
   if (user.role === 'EMPLOYEE') {
@@ -27,7 +27,7 @@ const getAllocations = async (user, query = {}) => {
     .sort({ allocatedAt: -1 });
 };
 
-const getAllocationById = async (id, user) => {
+export const getAllocationById = async (id, user) => {
   const allocation = await Allocation.findById(id)
     .populate('resource', 'name resourceId category location status')
     .populate('employee', 'name email department phone')
@@ -48,7 +48,7 @@ const getAllocationById = async (id, user) => {
   return allocation;
 };
 
-const createDirectAllocation = async (resourceId, employeeId, adminId, expectedReturnDate, notes) => {
+export const createDirectAllocation = async (resourceId, employeeId, adminId, expectedReturnDate, notes) => {
   const resource = await Resource.findById(resourceId);
   if (!resource) {
     const error = new Error('Resource not found');
@@ -99,7 +99,7 @@ const createDirectAllocation = async (resourceId, employeeId, adminId, expectedR
   return allocation;
 };
 
-const requestReturn = async (allocationId, employeeId, returnNotes) => {
+export const requestReturn = async (allocationId, employeeId, returnNotes) => {
   const allocation = await Allocation.findById(allocationId).populate('resource');
   if (!allocation) {
     const error = new Error('Allocation not found');
@@ -146,7 +146,7 @@ const requestReturn = async (allocationId, employeeId, returnNotes) => {
   return allocation;
 };
 
-const confirmReturn = async (allocationId, adminId, conditionNotes) => {
+export const confirmReturn = async (allocationId, adminId, conditionNotes) => {
   const allocation = await Allocation.findById(allocationId).populate('resource');
   if (!allocation) {
     const error = new Error('Allocation not found');
@@ -192,7 +192,7 @@ const confirmReturn = async (allocationId, adminId, conditionNotes) => {
   return allocation;
 };
 
-module.exports = {
+export default {
   getAllocations,
   getAllocationById,
   createDirectAllocation,

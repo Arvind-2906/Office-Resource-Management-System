@@ -1,7 +1,7 @@
-const Resource = require('../models/Resource');
-const { logActivity } = require('./activityService');
+import Resource from '../models/Resource.js';
+import { logActivity } from './activityService.js';
 
-const getAllResources = async (query = {}) => {
+export const getAllResources = async (query = {}) => {
   const filter = {};
 
   if (query.category) {
@@ -29,7 +29,7 @@ const getAllResources = async (query = {}) => {
     .sort({ createdAt: -1 });
 };
 
-const getResourceById = async (id) => {
+export const getResourceById = async (id) => {
   const resource = await Resource.findById(id).populate('createdBy', 'name email');
   if (!resource) {
     const error = new Error('Resource not found');
@@ -39,7 +39,7 @@ const getResourceById = async (id) => {
   return resource;
 };
 
-const createResource = async (resourceData, adminId) => {
+export const createResource = async (resourceData, adminId) => {
   const existing = await Resource.findOne({ resourceId: resourceData.resourceId.toUpperCase() });
   if (existing) {
     const error = new Error(`Resource with ID '${resourceData.resourceId}' already exists`);
@@ -57,7 +57,7 @@ const createResource = async (resourceData, adminId) => {
   return resource;
 };
 
-const updateResource = async (id, updateData, adminId) => {
+export const updateResource = async (id, updateData, adminId) => {
   if (updateData.resourceId) {
     updateData.resourceId = updateData.resourceId.toUpperCase();
     const existing = await Resource.findOne({ resourceId: updateData.resourceId, _id: { $ne: id } });
@@ -79,7 +79,7 @@ const updateResource = async (id, updateData, adminId) => {
   return resource;
 };
 
-const updateResourceStatus = async (id, status, adminId) => {
+export const updateResourceStatus = async (id, status, adminId) => {
   const validStatuses = ['AVAILABLE', 'ALLOCATED', 'BOOKED', 'UNDER_MAINTENANCE', 'INACTIVE'];
   if (!validStatuses.includes(status)) {
     const error = new Error(`Invalid status. Must be one of: ${validStatuses.join(', ')}`);
@@ -101,7 +101,7 @@ const updateResourceStatus = async (id, status, adminId) => {
   return resource;
 };
 
-const deleteResource = async (id, adminId) => {
+export const deleteResource = async (id, adminId) => {
   const resource = await Resource.findById(id);
   if (!resource) {
     const error = new Error('Resource not found');
@@ -120,7 +120,7 @@ const deleteResource = async (id, adminId) => {
   return { message: 'Resource deleted successfully' };
 };
 
-module.exports = {
+export default {
   getAllResources,
   getResourceById,
   createResource,

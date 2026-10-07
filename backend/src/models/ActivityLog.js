@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const activityLogSchema = new mongoose.Schema(
   {
@@ -37,4 +37,5 @@ const activityLogSchema = new mongoose.Schema(
 
 activityLogSchema.index({ timestamp: -1 });
 
-module.exports = mongoose.model('ActivityLog', activityLogSchema);
+const ActivityLog = mongoose.model('ActivityLog', activityLogSchema);
+export default ActivityLog;

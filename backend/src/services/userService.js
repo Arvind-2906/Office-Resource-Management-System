@@ -1,7 +1,7 @@
-const User = require('../models/User');
-const { logActivity } = require('./activityService');
+import User from '../models/User.js';
+import { logActivity } from './activityService.js';
 
-const getAllUsers = async (query = {}) => {
+export const getAllUsers = async (query = {}) => {
   const filter = {};
   if (query.role) filter.role = query.role;
   if (query.department) filter.department = query.department;
@@ -14,7 +14,7 @@ const getAllUsers = async (query = {}) => {
   return await User.find(filter).sort({ createdAt: -1 });
 };
 
-const getUserById = async (id) => {
+export const getUserById = async (id) => {
   const user = await User.findById(id);
   if (!user) {
     const error = new Error('User not found');
@@ -24,7 +24,7 @@ const getUserById = async (id) => {
   return user;
 };
 
-const createUser = async (userData, adminId) => {
+export const createUser = async (userData, adminId) => {
   const { name, email, password, role, department, phone } = userData;
 
   const existing = await User.findOne({ email });
@@ -48,7 +48,7 @@ const createUser = async (userData, adminId) => {
   return user;
 };
 
-const updateUser = async (id, updateData, adminId) => {
+export const updateUser = async (id, updateData, adminId) => {
   // Prevent password update through generic update
   delete updateData.password;
 
@@ -63,7 +63,7 @@ const updateUser = async (id, updateData, adminId) => {
   return user;
 };
 
-const updateUserStatus = async (id, isActive, adminId) => {
+export const updateUserStatus = async (id, isActive, adminId) => {
   const user = await User.findById(id);
   if (!user) {
     const error = new Error('User not found');
@@ -79,7 +79,7 @@ const updateUserStatus = async (id, isActive, adminId) => {
   return user;
 };
 
-module.exports = {
+export default {
   getAllUsers,
   getUserById,
   createUser,

@@ -1,7 +1,7 @@
-const maintenanceService = require('../services/maintenanceService');
-const ApiResponse = require('../utils/apiResponse');
+import maintenanceService from '../services/maintenanceService.js';
+import ApiResponse from '../utils/apiResponse.js';
 
-const reportMaintenance = async (req, res, next) => {
+export const reportMaintenance = async (req, res, next) => {
   try {
     const { resourceId, issue, priority } = req.body;
     if (!resourceId || !issue) {
@@ -15,7 +15,7 @@ const reportMaintenance = async (req, res, next) => {
   }
 };
 
-const getMaintenanceList = async (req, res, next) => {
+export const getMaintenanceList = async (req, res, next) => {
   try {
     const records = await maintenanceService.getMaintenanceList(req.user, req.query);
     return ApiResponse.success(res, 'Maintenance records retrieved successfully', { records });
@@ -24,7 +24,7 @@ const getMaintenanceList = async (req, res, next) => {
   }
 };
 
-const getMaintenanceById = async (req, res, next) => {
+export const getMaintenanceById = async (req, res, next) => {
   try {
     const record = await maintenanceService.getMaintenanceById(req.params.id, req.user);
     return ApiResponse.success(res, 'Maintenance record retrieved successfully', { record });
@@ -33,7 +33,7 @@ const getMaintenanceById = async (req, res, next) => {
   }
 };
 
-const updateMaintenanceStatus = async (req, res, next) => {
+export const updateMaintenanceStatus = async (req, res, next) => {
   try {
     const { status, resolutionNote } = req.body;
     if (!status) {
@@ -52,7 +52,7 @@ const updateMaintenanceStatus = async (req, res, next) => {
   }
 };
 
-module.exports = {
+export default {
   reportMaintenance,
   getMaintenanceList,
   getMaintenanceById,

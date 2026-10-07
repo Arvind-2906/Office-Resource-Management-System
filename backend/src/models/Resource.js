@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const resourceSchema = new mongoose.Schema(
   {
@@ -53,4 +53,5 @@ const resourceSchema = new mongoose.Schema(
 resourceSchema.index({ status: 1 });
 resourceSchema.index({ category: 1 });
 
-module.exports = mongoose.model('Resource', resourceSchema);
+const Resource = mongoose.model('Resource', resourceSchema);
+export default Resource;

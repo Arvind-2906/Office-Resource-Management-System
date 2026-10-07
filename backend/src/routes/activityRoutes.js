@@ -1,8 +1,9 @@
-const express = require('express');
+import express from 'express';
+import activityController from '../controllers/activityController.js';
+import { protect } from '../middleware/authMiddleware.js';
+import { authorize } from '../middleware/roleMiddleware.js';
+
 const router = express.Router();
-const activityController = require('../controllers/activityController');
-const { protect } = require('../middleware/authMiddleware');
-const { authorize } = require('../middleware/roleMiddleware');
 
 // Activity logs are viewable by ADMIN only
 router.use(protect);
@@ -10,4 +11,4 @@ router.use(authorize('ADMIN'));
 
 router.get('/', activityController.getActivityLogs);
 
-module.exports = router;
+export default router;

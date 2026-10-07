@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const resourceRequestSchema = new mongoose.Schema(
   {
@@ -46,4 +46,5 @@ const resourceRequestSchema = new mongoose.Schema(
 resourceRequestSchema.index({ employee: 1, status: 1 });
 resourceRequestSchema.index({ resource: 1, status: 1 });
 
-module.exports = mongoose.model('ResourceRequest', resourceRequestSchema);
+const ResourceRequest = mongoose.model('ResourceRequest', resourceRequestSchema);
+export default ResourceRequest;

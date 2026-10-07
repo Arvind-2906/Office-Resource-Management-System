@@ -1,7 +1,7 @@
-const app = require('./app');
-const connectDB = require('./config/db');
-const env = require('./config/env');
-const logger = require('./utils/logger');
+import app from './app.js';
+import connectDB from './config/db.js';
+import env from './config/env.js';
+import logger from './utils/logger.js';
 
 const startServer = async () => {
   try {

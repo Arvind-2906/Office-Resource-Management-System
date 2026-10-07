@@ -1,7 +1,7 @@
-const dashboardService = require('../services/dashboardService');
-const ApiResponse = require('../utils/apiResponse');
+import dashboardService from '../services/dashboardService.js';
+import ApiResponse from '../utils/apiResponse.js';
 
-const getAdminDashboard = async (req, res, next) => {
+export const getAdminDashboard = async (req, res, next) => {
   try {
     const data = await dashboardService.getAdminDashboard();
     return ApiResponse.success(res, 'Admin dashboard summary retrieved', data);
@@ -10,7 +10,7 @@ const getAdminDashboard = async (req, res, next) => {
   }
 };
 
-const getEmployeeDashboard = async (req, res, next) => {
+export const getEmployeeDashboard = async (req, res, next) => {
   try {
     const data = await dashboardService.getEmployeeDashboard(req.user._id);
     return ApiResponse.success(res, 'Employee dashboard summary retrieved', data);
@@ -19,7 +19,7 @@ const getEmployeeDashboard = async (req, res, next) => {
   }
 };
 
-module.exports = {
+export default {
   getAdminDashboard,
   getEmployeeDashboard
 };

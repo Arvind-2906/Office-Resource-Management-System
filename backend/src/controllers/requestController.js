@@ -1,7 +1,7 @@
-const requestService = require('../services/requestService');
-const ApiResponse = require('../utils/apiResponse');
+import requestService from '../services/requestService.js';
+import ApiResponse from '../utils/apiResponse.js';
 
-const createRequest = async (req, res, next) => {
+export const createRequest = async (req, res, next) => {
   try {
     const { resourceId, reason } = req.body;
     if (!resourceId || !reason) {
@@ -14,7 +14,7 @@ const createRequest = async (req, res, next) => {
   }
 };
 
-const getRequests = async (req, res, next) => {
+export const getRequests = async (req, res, next) => {
   try {
     const requests = await requestService.getRequests(req.user, req.query);
     return ApiResponse.success(res, 'Requests retrieved successfully', { requests });
@@ -23,7 +23,7 @@ const getRequests = async (req, res, next) => {
   }
 };
 
-const getRequestById = async (req, res, next) => {
+export const getRequestById = async (req, res, next) => {
   try {
     const request = await requestService.getRequestById(req.params.id, req.user);
     return ApiResponse.success(res, 'Request details retrieved', { request });
@@ -32,7 +32,7 @@ const getRequestById = async (req, res, next) => {
   }
 };
 
-const approveRequest = async (req, res, next) => {
+export const approveRequest = async (req, res, next) => {
   try {
     const { expectedReturnDate, notes } = req.body;
     const result = await requestService.approveRequest(req.params.id, req.user._id, expectedReturnDate, notes);
@@ -42,7 +42,7 @@ const approveRequest = async (req, res, next) => {
   }
 };
 
-const rejectRequest = async (req, res, next) => {
+export const rejectRequest = async (req, res, next) => {
   try {
     const { rejectionReason } = req.body;
     const request = await requestService.rejectRequest(req.params.id, req.user._id, rejectionReason);
@@ -52,7 +52,7 @@ const rejectRequest = async (req, res, next) => {
   }
 };
 
-module.exports = {
+export default {
   createRequest,
   getRequests,
   getRequestById,

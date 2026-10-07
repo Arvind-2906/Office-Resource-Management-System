@@ -1,7 +1,7 @@
-const userService = require('../services/userService');
-const ApiResponse = require('../utils/apiResponse');
+import userService from '../services/userService.js';
+import ApiResponse from '../utils/apiResponse.js';
 
-const getAllUsers = async (req, res, next) => {
+export const getAllUsers = async (req, res, next) => {
   try {
     const users = await userService.getAllUsers(req.query);
     return ApiResponse.success(res, 'Users retrieved successfully', { users });
@@ -10,7 +10,7 @@ const getAllUsers = async (req, res, next) => {
   }
 };
 
-const getUserById = async (req, res, next) => {
+export const getUserById = async (req, res, next) => {
   try {
     const user = await userService.getUserById(req.params.id);
     return ApiResponse.success(res, 'User retrieved successfully', { user });
@@ -19,7 +19,7 @@ const getUserById = async (req, res, next) => {
   }
 };
 
-const createUser = async (req, res, next) => {
+export const createUser = async (req, res, next) => {
   try {
     const user = await userService.createUser(req.body, req.user._id);
     return ApiResponse.created(res, 'User created successfully', { user });
@@ -28,7 +28,7 @@ const createUser = async (req, res, next) => {
   }
 };
 
-const updateUser = async (req, res, next) => {
+export const updateUser = async (req, res, next) => {
   try {
     const user = await userService.updateUser(req.params.id, req.body, req.user._id);
     return ApiResponse.success(res, 'User updated successfully', { user });
@@ -37,7 +37,7 @@ const updateUser = async (req, res, next) => {
   }
 };
 
-const updateUserStatus = async (req, res, next) => {
+export const updateUserStatus = async (req, res, next) => {
   try {
     const { isActive } = req.body;
     const user = await userService.updateUserStatus(req.params.id, isActive, req.user._id);
@@ -47,7 +47,7 @@ const updateUserStatus = async (req, res, next) => {
   }
 };
 
-module.exports = {
+export default {
   getAllUsers,
   getUserById,
   createUser,
