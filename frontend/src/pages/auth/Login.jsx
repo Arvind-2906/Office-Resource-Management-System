@@ -45,7 +45,7 @@ export default function Login() {
             <Building2 className="w-8 h-8" />
           </div>
           <h2 className="text-xl font-bold text-slate-800">Office Resource Management</h2>
-          <p className="text-xs text-slate-500 mt-1">Agile & DevOps Lab Project</p>
+
         </div>
 
         {error && (
